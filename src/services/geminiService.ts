@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// The API key is managed by the platform and available via process.env.GEMINI_API_KEY
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+// The API key is managed by the platform and available via import.meta.env.VITE_GEMINI_API_KEY
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || "" });
 
 export const getRecommendations = async (userTags: string, watchedVideos: string, availableVideos: any[]) => {
   const prompt = `Based on user interests: ${userTags}, watch history: ${watchedVideos}, 

@@ -25,17 +25,29 @@ app.use(express.json());
 
 // Database Connection
 const MONGODB_URI = process.env.MONGODB_URI;
-if (MONGODB_URI) {
-  console.log('Attempting to connect to MongoDB...');
-  mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Successfully connected to MongoDB'))
-    .catch((err) => {
-      console.error('CRITICAL: MongoDB connection error:', err.message);
-      console.error('Full error details:', err);
-    });
-} else {
-  console.error('CRITICAL: MONGODB_URI is missing from environment variables.');
-}
+
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  
+  if (!MONGODB_URI) {
+    console.error('CRITICAL: MONGODB_URI is missing from environment variables.');
+    return;
+  }
+
+  try {
+    console.log('Attempting to connect to MongoDB...');
+    await mongoose.connect(MONGODB_URI);
+    console.log('Successfully connected to MongoDB');
+  } catch (err: any) {
+    console.error('CRITICAL: MongoDB connection error:', err.message);
+  }
+};
+
+// Connect to DB on every request for serverless compatibility
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
