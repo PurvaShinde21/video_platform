@@ -1,0 +1,5 @@
+{
+  "name": "TikTok Replica",
+  "description": "A full-stack TikTok clone with AI-powered recommendations, hashtag generation, and content moderation using Google Gemini.",
+  "requestFramePermissions": []
+}
