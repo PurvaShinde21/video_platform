@@ -16,34 +16,34 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
-  // Middleware
-  app.use(cors());
-  app.use(express.json());
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-  // Database Connection
-  const MONGODB_URI = process.env.MONGODB_URI;
-  if (MONGODB_URI) {
-    console.log('Attempting to connect to MongoDB...');
-    mongoose.connect(MONGODB_URI)
-      .then(() => console.log('Successfully connected to MongoDB'))
-      .catch((err) => {
-        console.error('CRITICAL: MongoDB connection error:', err.message);
-        console.error('Full error details:', err);
-      });
-  } else {
-    console.error('CRITICAL: MONGODB_URI is missing from environment variables.');
-  }
+// Database Connection
+const MONGODB_URI = process.env.MONGODB_URI;
+if (MONGODB_URI) {
+  console.log('Attempting to connect to MongoDB...');
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Successfully connected to MongoDB'))
+    .catch((err) => {
+      console.error('CRITICAL: MongoDB connection error:', err.message);
+      console.error('Full error details:', err);
+    });
+} else {
+  console.error('CRITICAL: MONGODB_URI is missing from environment variables.');
+}
 
-  // API Routes
-  app.use('/api/auth', authRoutes);
-  app.use('/api/videos', videoRoutes);
-  app.use('/api/users', userRoutes);
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/videos', videoRoutes);
+app.use('/api/users', userRoutes);
 
-  // Vite middleware for development
+// Vite middleware for development
+async function setupVite() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -57,10 +57,14 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+}
 
+setupVite();
+
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-startServer();
+export default app;
