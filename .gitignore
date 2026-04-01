@@ -6,3 +6,20 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS artifacts
+Thumbs.db
+
+# Render/deployment secrets
+render.yaml       
+
+# Scratch files (one-off files)
+untitled*.tsx
+*.tsx.bak
+
